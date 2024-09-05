@@ -1,0 +1,47 @@
+﻿@page "/warehouses"
+@inherits WarehouseListBase
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            <br />
+            <h3>Danh sách kho hàng</h3>
+            <br />
+            <div class="table">
+                <table>
+                    <thead>
+                    <th class="col-sm-1">Mã kho</th>
+                    <th class="col-sm-3">Tên kho</th>
+                    <th class="col-sm-4">Diễn tả</th>
+                    <th class="col-sm-2">Địa chỉ</th>
+                    </thead>
+                    @if (Warehouses == null)
+                    {
+                        <div class="spinner"></div>
+                    }
+                    else
+                    {
+                        <tbody>
+                            @foreach (var warehouse in Warehouses)
+                            {
+                                <tr>
+                                    <td class="col-sm-1" style="text-align: center">@warehouse.WarehouseId</td>
+                                    <td class="col-sm-3">@warehouse.WarehouseName</td>
+                                    <td class="col-sm-4">@warehouse.WarehouseDesc</td>
+                                    <td>
+                                        <a class="col-sm-2" href="@warehouse.GPSCoordinates" target="_blank">Dẫn đường</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    }
+                </table>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <AccessDenied></AccessDenied>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+

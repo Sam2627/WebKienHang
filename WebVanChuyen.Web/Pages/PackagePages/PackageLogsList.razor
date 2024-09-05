@@ -1,0 +1,80 @@
+﻿@page "/package-logs"
+@inherits PackageLogsListBase
+
+
+<h3>Theo dõi kiện hàng</h3>
+
+@if (LoadingPage)
+{
+    <div class="spinner"></div>
+}
+else
+{
+    <b class="text-danger">@ErrorMessage</b>
+    <EditForm Model="InputSearch" OnValidSubmit="HandleValidSubmit">
+        <div class="form-group row" style="padding-bottom:10px">
+            <div>
+                <InputCheckbox id="check" @bind-Value="IsPhone" @bind-Value:after="ReloadInput"></InputCheckbox>
+                <label for="check" class="col-sm-2 col-form-label">Nhập số điện thoại</label>
+            </div>
+            @if (IsPhone)
+            {
+
+                <div style="resize:horizontal; overflow:clip; display:inline-flex">
+                    <label for="input-id" class="col-sm-2 col-form-label">Số điện thoại:</label>
+                    <div class="col-sm-5">
+                        <InputText id="input-id" class="form-control" placeholder="Nhập số điện thoại nhận" @bind-Value="InputSearch"></InputText>
+                    </div>
+                    <div style="margin-left:10px">
+                        <button class="btn btn-primary" type="submit">Xác nhận</button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div style="resize:horizontal; overflow:clip; display:inline-flex">
+                    <label for="input-id" class="col-sm-2 col-form-label">Mã đơn vận chuyển:</label>
+                    <div class="col-sm-5">
+                        <InputText id="input-id" class="form-control" placeholder="Nhập mã vận chuyển" @bind-Value="InputSearch"></InputText>
+                    </div>
+                    <div style="margin-left:10px">
+                        <button class="btn btn-primary" type="submit">Xác nhận</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </EditForm>
+    <br />
+    <!-- List of package logs -->
+    <div class="table">
+        <table>
+            <thead>
+            <th style="text-align:center;">Mã nhật ký</th>
+            <th style="text-align:center;">Thời gian</th>
+            <th style="text-align:center;">Mã chuyến xe</th>
+            <th style="text-align:center;">Biển số xe</th>
+            <th style ="text-align:center;">Ghi chú</th>
+            </thead>
+            @if (Logs != null)
+            {
+                <tbody>
+                    @foreach (var log in Logs)
+                    {
+                        <tr>
+                            <td class="col-sm-1" style="text-align:center; border-right: 1px solid #000">@log.PackageLogId</td>
+                            <td class="col-sm-2" style="text-align:center; border-right: 1px solid #000">
+                                <time datetime="hh:mmTDD-MM-YYYY">@log.CreatedTime</time>
+                            </td>
+                            <td class="col-sm-2" style="text-align:center; border-right: 1px solid #000">@log.ShipmentTripId</td>
+                            <td class="col-sm-2" style="text-align:center; border-right: 1px solid #000">@log.TruckId</td>
+                            <td class="col-sm-5" style="border-right: 1px solid #000">@log.LogNote</td>
+                        </tr>
+                    }
+                </tbody>
+            }
+        </table>
+    </div>
+}
+
+
+

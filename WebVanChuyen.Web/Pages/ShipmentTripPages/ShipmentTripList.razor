@@ -1,0 +1,157 @@
+﻿@page "/shipment-trip/list"
+@inherits ShipmentTripListBase
+@inject NavigationManager _nav
+@using WebVanChuyen.Models.Models
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            <h3 style="text-align:left">Danh sách chuyến xe</h3>
+            <br />
+        </Authorized>
+    </AuthorizeView>
+    <AuthorizeView Roles="Manager">
+        <Authorized>
+            <div>
+                <a class="btn btn-primary m-1" href="@("/shipment-trip/add")">Thêm chuyến xe</a>
+            </div>
+            <hr />
+            <div>
+                <InputCheckbox id="check" @bind-Value="IsStart" @bind-Value:after="CheckIsStart"></InputCheckbox>
+                <label for="check" class="col-sm-2 col-form-label">Là kho xuất phát</label>
+            </div>
+        </Authorized>
+    </AuthorizeView>
+    <AuthorizeView Roles="Manager, Staff, Driver">
+        <Authorized>
+            <div>
+                <b class="text-danger">@ErrorMessage</b>
+            </div>
+            <div class="table">
+                <table>
+                    <thead>
+                    <th>Mã chuyến</th>
+                    <th>Biển số</th>
+                    <th>Xuất phát</th>
+                    <th>Đích đến</th>
+                    <th>Giờ khởi hành</th>
+                    <th>Giờ đến</th>
+                    <th>Lái xe chính</th>
+                    <th>Lái xe phụ</th>
+                    <th></th>
+                    <th></th>
+                    </thead>
+                    @if (Drivers == null || Warehouses == null || ShipmentTrips == null)
+                    {
+                        <div class="spinner"></div>
+                    }
+                    else
+                    {
+                        <tbody>
+                            @foreach (var shipmentTrip in ViewShipmentTrips)
+                            {
+                                <tr>
+                                    <td style="text-align: center">@shipmentTrip.ShipmentTripId</td>
+                                    <td>@shipmentTrip.TruckId</td>
+                                    <td>@Warehouses.First(w => w.WarehouseId == shipmentTrip.StartWH).WarehouseName</td>
+                                    <td>@Warehouses.First(w => w.WarehouseId == shipmentTrip.EndWH).WarehouseName</td>
+                                    <td style="text-align: center">
+                                        <time datetime="hh:mmTDD-MM-YYYY">@shipmentTrip.BeginT</time>
+                                    </td>
+                                    <td style="text-align: center">
+                                        <time datetime="hh:mmTDD-MM-YYYY">@shipmentTrip.ArrivedT</time>
+                                    </td>
+                                    <td>@Drivers.First(emp => emp.EmployeeId == shipmentTrip.Driver1).EmployeeName</td>
+                                    @if (shipmentTrip.Driver2 != null && shipmentTrip.Driver2 != 0)
+                                    {
+                                        <td>@Drivers.FirstOrDefault(emp => emp.EmployeeId == shipmentTrip.Driver2).EmployeeName</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    @switch (GetButtonType(shipmentTrip.Status))
+                                    {
+                                        <!-- Manager part -->
+                                        <!-- From warehouse -->
+                                        // Case 1: Add package and start shipment trip
+                                        case 1:
+                                            <td>
+                                                <a class="btn btn-primary" href="@($"/shipment-trip/{shipmentTrip.ShipmentTripId}")">Thêm kiện hàng</a>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-primary" @onclick="() => ShipmentTripTransporting(shipmentTrip.ShipmentTripId)">Xuất phát</button>
+                                            </td>
+                                            break;
+                                        // Case 2: Shipment trip pending for confirm
+                                        case 2:
+                                            <td>
+                                                <button type="button" class="btn btn-outline-secondary" disabled>Đã đến nơi</button>
+                                            </td>
+                                            break;
+                                        // Case 3: Shipment trip is transport
+                                        case 3:
+                                            <td>
+                                                <button type="button" class="btn btn-outline-secondary" disabled>Đang vận chuyển</button>
+                                            </td>
+                                            break;
+                                        <!-- Comming warehouse -->
+                                        // Case 4: Shipment is waiting in the start
+                                        case 4:
+                                            <td>
+                                                <button type="button" class="btn btn-outline-secondary" disabled>Đang chuẩn bị</button>
+                                            </td>
+                                            break;
+                                        // Case 5: Confirm request complete shipment trip
+                                        case 5:
+                                            <td>
+                                                <button type="button" class="btn btn-primary" @onclick="() => ShipmentTripComplete(shipmentTrip.ShipmentTripId)">Xác nhận nhập kho</button>
+                                            </td>
+                                            break;
+
+                                        <!-- Staff part -->
+                                        case 6:
+                                        // Case 6: Staff view packages in shipment trip
+                                            <td>
+                                                <a class="btn btn-primary" href="@($"/shipment-trip/{shipmentTrip.ShipmentTripId}")">Chi tiết</a>
+                                            </td>
+                                            break;
+
+                                        <!-- Driver part -->
+                                        case 7:
+                                            // Case 7: Driver await shipment to start
+                                            <td>
+                                                <button type="button" class="btn btn-outline-secondary" disabled>Đang chuẩn bị</button>
+                                            </td>
+                                            break;
+                                        case 8:
+                                            // Case 8: Request confirm arrived shipment trip
+                                            <td>
+                                                <button type="button" class="btn btn-primary" @onclick="() => ShipmentTripArrived(shipmentTrip.ShipmentTripId)">Yêu cầu nhập kho</button>
+                                            </td>
+                                            break;
+                                        <!-- Driver part -->
+                                        case 9:
+                                            // Case 9: Wait for confirm arrived
+                                            <td>
+                                                <button type="button" class="btn btn-outline-secondary" disabled>Chờ duyệt</button>
+                                            </td>
+                                            break;
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    }
+                </table>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <AccessDenied></AccessDenied>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+
+
+

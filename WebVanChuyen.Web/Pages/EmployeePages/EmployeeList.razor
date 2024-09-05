@@ -1,0 +1,48 @@
+﻿@page "/employees"
+@inherits EmployeeListBase
+
+
+<h3>Employee List</h3>
+
+<p></p>
+
+<div>
+    <button class="btn btn-primary" href="/employee">Tạo nhân viên</button>
+</div>
+
+<p></p>
+
+<div class="table">
+    <table>
+        <thead>
+        <th>Mã lô hàng</th>
+        <th>Tên nhân viên</th>
+        <th>Chức vụ</th>
+        <th>Nơi làm việc</th>
+        </thead>
+        @if (Employees == null || EmployeesPositions == null || Warehouses == null)
+        {
+            <div class="spinner"></div>
+        }
+        else
+        {
+            <tbody>
+                @foreach (var employee in Employees)
+                {
+                    <tr>
+                        <td style="text-align: center">@employee.EmployeeId</td>
+                        <td>@employee.EmployeeName</td>
+                        <td>@EmployeesPositions.FirstOrDefault(p => p.PositionId == employee.PositionId).PositionName</td>
+                        <td>@Warehouses.FirstOrDefault(p => p.WarehouseId == employee.WWarehouseId).WarehouseName</td>
+
+                        <td><button class="btn-primary" href="@($"employee/{employee.EmployeeId}")">Chi tiết</button></td>
+                    </tr>
+                }
+            </tbody>
+        }
+    </table>
+</div>
+
+
+
+

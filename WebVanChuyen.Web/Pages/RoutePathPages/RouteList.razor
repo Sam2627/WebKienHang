@@ -1,0 +1,50 @@
+﻿@page "/routes"
+@inherits RouteListBase
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView Policy="AdminOnly">
+        <Authorized>
+            <h3>Danh sách tuyến đường</h3>
+            <br />
+            <RouteAdd ReloadRoutes="ReloadRoutes"></RouteAdd>
+            <br />
+            <div class="table">
+                <table>
+                    <thead>
+                    <th>Mã tuyến</th>
+                    <th>Nơi xuất phát</th>
+                    <th>Nơi đến</th>
+                    <th>Danh sách trung chuyển</th>
+                    <th>Chi phí của tuyến</th>
+                    <th>Giá ship của tuyến</th>
+                    </thead>
+                    @if (Routes == null)
+                    {
+                        <div class="spinner"></div>
+                    }
+                    else
+                    {
+                        <tbody>
+                            @foreach (var route in Routes)
+                            {
+                                <tr>
+                                    <td>@route.RouteId</td>
+                                    <td>@route.StartPoint</td>
+                                    <td>@route.EndPoint</td>
+                                    <td>@EditStopPoint(route.StartPoint, route.EndPoint, route.StopPointsList)</td>
+                                    <td>@route.TotalCost</td>
+                                    <td>@route.TotalShipCost</td>
+                                </tr>
+                            }
+                        </tbody>
+                    }
+                </table>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <AccessDenied></AccessDenied>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+

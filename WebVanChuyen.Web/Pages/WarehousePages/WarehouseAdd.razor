@@ -1,0 +1,91 @@
+﻿@page "/warehouse/add"
+@inherits WarehouseAddBase
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView Context="ViewContext" Policy="AdminOnly">
+        <Authorized>
+            @if (Provinces == null || Districts == null)
+            {
+                <div class="spinner"></div>
+            }
+            else
+            {
+                <h3>Thêm kho hàng</h3>
+                <br />
+                <EditForm Model="@AddWarehouse" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <div class="form-group row" style="padding-bottom:10px">
+                        <label for="warehouse-id" class="col-sm-2 col-form-label">Mã kho hàng:</label>
+                        <div class="col-sm-10">
+                            <InputText id="warehouse-id" class="form-control" placeholder="" @bind-Value="AddWarehouse.WarehouseId" />
+                            <ValidationMessage For="@(() => AddWarehouse.WarehouseId)" />
+                        </div>
+                        @IsExistMessage
+                    </div>
+                    <div class="form-group row" style="padding-bottom:10px">
+                        <label for="warehouse-name" class="col-sm-2 col-form-label">Tên kho hàng:</label>
+                        <div class="col-sm-10">
+                            <InputText id="warehouse-name" class="form-control" placeholder="" @bind-Value="AddWarehouse.WarehouseName" />
+                            <ValidationMessage For="@(() => AddWarehouse.WarehouseName)" />
+                        </div>
+                    </div>
+                    <div class="form-group row" style="padding-bottom:10px">
+                        <label for="warehouse-addr" class="col-sm-2 col-form-label">Địa chỉ kho hàng:</label>
+                        <div class="col-sm-10">
+                            <InputTextArea id="warehouse-addr" class="form-control" placeholder="" @bind-Value="AddWarehouse.WarehouseAddr" />
+                            <ValidationMessage For="@(() => AddWarehouse.WarehouseAddr)" />
+                        </div>
+                    </div>
+                    <div class="form-group row" style="padding-bottom:10px">
+                        <label for="warehouse-desc" class="col-sm-2 col-form-label">Mô tả kho hàng:</label>
+                        <div class="col-sm-10">
+                            <InputTextArea id="warehouse-desc" class="form-control" placeholder="" @bind-Value="AddWarehouse.WarehouseDesc" />
+                            <ValidationMessage For="@(() => AddWarehouse.WarehouseDesc)" />
+                        </div>
+                    </div>
+                    <!-- Select location -->
+                    <div class="form-group row">
+                        <div style="resize:horizontal; overflow:clip; display:inline-flex; margin-left:4px">
+                            <label for="province" class="col-sm-2 col-form-label">Nơi đến</label>
+                            <div class="col-sm-2">
+                                <InputSelect id="province" class="form-control " @bind-Value="AddWarehouse.ProvinceId" @bind-Value:after="OnChangeProvince">
+                                    <option value="">Chọn tỉnh/tp</option>
+                                    @foreach (var province in Provinces)
+                                    {
+                                        <option value="@province.ProvinceId">@province.ProvinceName</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="@(() => AddWarehouse.ProvinceId)" />
+                            </div>
+                            <div class="col-sm-2" style="margin-left:12px">
+                                <InputSelect class="form-control " @bind-Value="AddWarehouse.DistrictId" @onclick="OnClickDistrict">
+                                    <option value="0">Chọn quận/huyện</option>
+                                    @foreach (var district in LoadDistricts)
+                                    {
+                                        <option value="@district.DistrictId">@district.DistrictName</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="@(() => AddWarehouse.DistrictId)" />
+                            </div>
+                        </div>
+                    </div>
+                    <!-- GPS Coordinates -->
+                    <div class="form-group row" style="padding-bottom:10px">
+                        <label for="warehouse-gps" class="col-sm-2 col-form-label">Tọa độ GPS:</label>
+                        <div class="col-sm-10">
+                            <InputTextArea id="warehouse-gps" class="form-control" placeholder="" @bind-Value="AddWarehouse.GPSCoordinates" />
+                            <ValidationMessage For="@(() => AddWarehouse.GPSCoordinates)" />
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" type="submit">Tạo kho hàng</button>
+                    </div>
+                </EditForm>
+            }
+        </Authorized>
+        <NotAuthorized>
+            <AccessDenied></AccessDenied>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>

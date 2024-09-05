@@ -1,0 +1,49 @@
+﻿@page "/paths"
+@inherits RoutePathListBase
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView Policy="AdminOnly">
+        <Authorized>
+            <h3>Danh sách đường đi</h3>
+            <br />
+            <div>
+                <a class="btn btn-primary m-1" href="@("/path/add")">Thêm đường đi</a>
+            </div>
+            <br />
+            <div class="table">
+                <table>
+                    <thead>
+                    <th>Mã đường đi</th>
+                    <th>Nơi xuất phát</th>
+                    <th>Nơi đến</th>
+                    <th>Chi phí</th>
+                    <th>Giá ship</th>
+                    </thead>
+                    @if (Warehouses == null || PathList == null)
+                    {
+                        <div class="spinner"></div>
+                    }
+                    else
+                    {
+                        <tbody>
+                            @foreach (var path in PathList)
+                            {
+                                <tr>
+                                    <td>@path.PathId</td>
+                                    <td>@path.StartPoint</td>
+                                    <td>@path.EndPoint</td>
+                                    <td>@path.Cost</td>
+                                    <td>@path.ShipCost</td>
+                                </tr>
+                            }
+                        </tbody>
+                    }
+                </table>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <AccessDenied></AccessDenied>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>

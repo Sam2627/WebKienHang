@@ -1,0 +1,47 @@
+﻿@page "/product/add"
+@inherits ProductAddBase
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView Context="ViewContext" Policy="ManagerRole">
+        <Authorized>
+            <h2>Thêm sản phẩm</h2>
+            <br />
+            <EditForm Context="EditContext" Model="@Product" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <div class="form-group row" style="padding-bottom:10px">
+                    <label for="product-name" class="col-sm-2 col-form-label">Tên sản phẩm:</label>
+                    <div class="col-sm-10">
+                        <InputText id="product-name" class="form-control" placeholder="" @bind-Value="Product.ProductName" />
+                        <ValidationMessage For="@(() => Product.ProductName)" />
+                    </div>
+                </div>
+                <div class="form-group row" style="padding-bottom:10px">
+                    <label for="product-des" class="col-sm-2 col-form-label">Ghi chú sản phẩm:</label>
+                    <div class="col-sm-10">
+                        <InputTextArea id="product-des" class="form-control" placeholder="" @bind-Value="Product.ProductDesc" />
+                        <ValidationMessage For="@(() => Product.ProductDesc)" />
+                    </div>
+                </div>
+                <div style="padding:10px">
+                    <!--
+                        <button class="btn btn-primary" type="submit" style="margin:auto; display:block">Tạo sản phẩm</button>
+                    -->
+                    <button class="btn btn-primary" type="submit">Tạo sản phẩm</button>
+                </div>
+            </EditForm>
+        </Authorized>
+        <NotAuthorized>
+            <AccessDenied></AccessDenied>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+
+
+
+
+
+
+
+

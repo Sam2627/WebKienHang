@@ -1,0 +1,234 @@
+﻿@page "/package-view"
+
+@inject PackageStateContainer myStateContainer
+@inject NavigationManager _nav
+@inject IJSRuntime JS
+
+@using WebVanChuyen.Models.Models
+@using WebVanChuyen.Web.Services
+@using WebVanChuyen.Web.Services.Data
+
+
+<div style="resize:horizontal; overflow:clip; display:inline-flex">
+    <div>
+        <h3>Thông tin kiện hàng vừa tạo</h3>
+    </div>
+    <div>
+        <button class="btn btn-primary" style="margin-left:20px" @onclick="@(() => _nav.NavigateTo("/package/add"))">Trở lại</button>
+    </div>
+    <div>
+        <button class="btn btn-primary" style="margin-left:20px" @onclick="Print" >In kết quả</button>
+    </div>
+</div>
+
+<hr />
+
+@if (hide1)
+{
+    <div>
+        <p>Mã kiện hàng: @package.PackageId</p>
+        <p>Nội dung: @package.PackageDesc</p>
+        <p>Nhân viên tiếp nhận: @employeeName</p>
+        <p>Tình trạng: @StatusName()</p>
+        <p>Nơi lưu trữ: @warehouseName</p>
+        <p>Cân nặng: @package.Weight Kg</p>
+        <p>Tuyến đường: @package.RouteId</p>
+        <p>Tên người gửi: @package.SenderName</p>
+        <p>Sdt người gửi: @package.SenderPhone</p>
+        <p>Đ/c người gửi: @package.SenderAddr</p>
+        <p>Tên người nhận: @package.ReceiverName</p>
+        <p>Sdt người nhận: @package.ReceiverPhone</p>
+        <p>Đ/c người nhận: @package.ReceiverAddr</p>
+        <p>Thu dùm: @package.Collect VNĐ</p>
+        <p>Tiền ship: @package.ShipCost VNĐ</p>
+        <p>Thanh toán: @PayStatusName()</p>
+    </div>
+}
+  
+.<style>
+     table {
+         width: 100%;
+     }
+     tr {
+         height: 30px
+     }
+     td {
+         height: 20px;
+     }
+     hr.tb{
+         border:1px solid black;
+     }
+</style>
+
+@if (hide2)
+{
+    <div id="PrintDiv" style="padding:10px;">
+        <div style="border:1px solid black; margin:auto;">
+            <!-- 1st Row - Company Name -->
+            <table>
+                <tbody>
+                    <tr style="height:50px;">
+                        <td style="width:100%;">Đơn vị vận chuyển: AI BIẾT ĐÂU</td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- 2nd Row - Destinal Location -->
+            <hr class="tb" />
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width:30%">Tỉnh/TP: @provinceName</td>
+                        <td style="width:35%">Quận/huyện: @districtName</td>
+                        <td style="width:35%">Phường/xã: @communeName</td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- 3rd Row - Package info 1 -->
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width:65%">Mã vận đơn: @package.PackageId</td>
+                        <td style="width:35%">Khối lượng: @package.Weight KG</td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- 4th Row - Sender info 1 -->
+            <hr class="tb" />
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width:65%">Người gửi: @package.SenderName</td>
+                        <td style="width:35%">SDT: @package.SenderPhone</td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- 5th Row - Sender info 2 -->
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width:100%">Địa chỉ người gửi: @package.SenderAddr</td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- 6th Row - Receiver info 1 -->
+            <hr class="tb" />
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width:65%">Người nhận: @package.ReceiverName</td>
+                        <td style="width:35%">SDT: @package.ReceiverPhone</td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- 7th Row - Receiver info 2 -->
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width:100%">Địa chỉ người nhận: @package.ReceiverAddr</td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- 8th Row - Collet money -->
+            <hr class="tb" />
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width:100%">Tiền thu: @PackageCost(package) VNĐ</td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- 9th Row - Package content -->
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width:100%">Nội dung</td>
+                    </tr>
+                    <tr>
+                        <td style="width:100%; height:auto">@package.PackageDesc</td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- 10th Row - Receiver signal -->
+            <hr class="tb"/>
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="width:100%; height:80px">Chữ ký người nhận:</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+
+@code {
+    private string warehouseName;
+    private string employeeName;
+    public string provinceName { get; set; }
+    public string districtName { get; set; }
+    public string communeName { get; set; }
+    private Package package;
+    private bool hide1 = false;
+    private bool hide2 = true;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        package = myStateContainer.Package;
+        warehouseName = myStateContainer.WarehouseName;
+        employeeName = myStateContainer.EmployeeName;
+        provinceName = myStateContainer.ProvinceName;
+        districtName = myStateContainer.DistrictName;
+        communeName = myStateContainer.CommuneName;
+    }
+
+    private string StatusName()
+    {
+        switch (package.Status)
+        {
+            case 0:
+                return "Đang ở kho";
+                break;
+            case 1:
+                return "Đang vận chuyển";
+                break;
+        }
+
+        return null;
+    }
+
+    private string PayStatusName()
+    {
+        switch (package.PayStatus)
+        {
+            case 0:
+                return "Chưa thanh toán";
+                break;
+            case 1:
+                return "Đã thanh toán";
+                break;
+        }
+
+        return null;
+    }
+
+    protected string PackageCost(Package package)
+    {
+        int value;
+        // Unpaid ship cost
+        if (package.PayStatus == (int)PaymentStatus.Unpaid) value = package.Collect + package.ShipCost;
+        else value = package.Collect;
+
+        string result = string.Format("{0:N0}", value);
+
+        return result;
+    }
+
+    public async Task Print()
+    {
+        await JS.InvokeVoidAsync("printContent");
+    }
+}
+
+

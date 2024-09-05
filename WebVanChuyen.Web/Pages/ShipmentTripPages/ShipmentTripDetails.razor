@@ -1,0 +1,101 @@
+﻿@page "/shipment-trip/{id}"
+@inherits ShipmentTripDetailsBase
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView Roles="Manager, Staff">
+        <Authorized>
+            <h3>Thông tin chuyến xe</h3>
+
+            @if (ShipmentTrip == null || Routes == null || PackageLogs == null || PackagesCanTranport == null)
+            {
+                <div class="spinner"></div>
+            }
+            else
+            {
+                <!-- Shipment trip info -->
+                <div>
+                    <div>
+                        <p>Mã chuyến xe: @ShipmentTrip.ShipmentTripId</p>
+                    </div>
+                    <div>
+                        <p>Biển số xe: @ShipmentTrip.TruckId</p>
+                    </div>
+                </div>
+                <div>
+                    <p>Nơi đến: @DestWarehouseName</p>
+                </div>
+                <br />
+                <!-- Package in shipment trip -->
+                <div class="table">
+                    <table>
+                        <thead>
+                        <th class="col-sm-2" style="text-align:center">Mã chuyến</th>
+                        <th class="col-sm-2" style="text-align:center">Mã kiện hàng</th>
+                        <th class="col-sm-2" style="text-align:center">Biển số</th>
+                        </thead>
+                        <tbody>
+                            @if (LoadingPage)
+                            {
+                                <div class="spinner"></div>
+                            }
+                            else
+                            {
+                                @foreach (var packageLog in PackageLogs)
+                                {
+                                    <tr>
+                                        <td style="text-align: center">@packageLog.ShipmentTripId</td>
+                                        <td style="text-align: center">@packageLog.PackageId</td>
+                                        <td style="text-align: center">@packageLog.TruckId</td>
+                                        @if (IsManager)
+                                        {
+                                            <td class="btn btn-primary m-1" @onclick="() => RemovePackage(packageLog.PackageLogId)">Xóa</td>
+                                        }
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    <hr />
+                    <!-- Add new package to shipment trip -->
+                    @if (EditValid && IsManager)
+                    {
+                        <div>
+                            <button class="btn btn-primary" @onclick="() => AddPackgesToShipmentTrip()">Thêm các kiện hàng</button>
+                        </div>
+                        <div>
+                            <p>Các kiện hàng có thể thêm:</p>
+                        </div>
+                        <!-- Packages can add into shipment trip part -->
+                        @if (PackagesCanTranport == null || LoadingPage == true)
+                        {
+                            <div class="spinner"></div>
+                        }
+                        else
+                        {
+                            <br />
+                            <div>
+                                <ol>
+                                    @foreach (var package in PackagesCanTranport)
+                                    {
+                                        <li>
+                                            <input type="checkbox" class="form-check-input" style="margin-left:20px" @onchange="@((ChangeEventArgs e) => EditSelectPackages(package.PackageId))" />
+                                            <span style="margin-left:30px">Kiện hàng số: @package.PackageId</span>
+                                        </li>
+                                    }
+                                </ol>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </Authorized>
+    </AuthorizeView>
+    <AuthorizeView>
+
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+
+
+

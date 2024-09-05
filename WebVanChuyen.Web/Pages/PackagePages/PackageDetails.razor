@@ -1,0 +1,125 @@
+﻿@page "/package/{Id}"
+@inherits PackageDetailsBase
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            @if (Package == null || Warehouse == null || Employee == null)
+            {
+                <div class="spinner"></div>
+            }
+            else
+            {
+                <div class ="form-group row">
+                    <label for="packageId" class="col-sm-2 col-form-label">Mã kiện hàng</label>
+                    <div class="col-sm-10">
+                        <p id="packageId">@Package.PackageId</p>
+                    </div>
+                </div>
+                <div class ="form-group row">
+                    <label for="receptionist" class="col-sm-2 col-form-label">Nhân viên nhận</label>
+                    <div class="col-sm-10">
+                        <p id="receptionist">@Employee.First(emp => emp.EmployeeId == Package.ReceptionistId)</p>
+                    </div>
+                </div>
+                <div class ="form-group row">
+                    <label for="shipper" class="col-sm-2 col-form-label">Nhân viên giao hàng</label>
+                    <div class="col-sm-10">
+                        @if (Package.ShipperId != null)
+                        {
+                            <p id="shipper">@Employee.First(emp => emp.EmployeeId == Package.ShipperId)</p>
+                        }
+                        else
+                        {
+                            <p id="shipper">N/A</p>
+                        }
+                    </div>
+                </div>
+                <div class ="form-group row">
+                    <label for="sender-name" class="col-sm-2 col-form-label">Người gửi</label>
+                    <div class="col-sm-10">
+                        <p id="sender-name">@Package.SenderName</p>
+                    </div>
+                </div>
+                <div class ="form-group row">
+                    <label for="sender-phone" class="col-sm-2 col-form-label">Sdt người gửi</label>
+                    <div class="col-sm-10">
+                        <p id="sender-phone">@Package.SenderPhone</p>
+                    </div>
+                </div>
+                <div class ="form-group row">
+                    <label for="sender-addr" class="col-sm-2 col-form-label">Đ/c người gửi</label>
+                    <div class="col-sm-10">
+                        <p id="sender-addr">@Package.SenderAddr</p>
+                    </div>
+                </div>
+                <div class ="form-group row">
+                    <label for="receiver-name" class="col-sm-2 col-form-label">Người nhận</label>
+                    <div class="col-sm-10">
+                        <p id="receiver-name">@Package.ReceiverName</p>
+                    </div>
+                </div>
+                <div class ="form-group row">
+                    <label for="receiver-phone" class="col-sm-2 col-form-label">Sdt người nhận</label>
+                    <div class="col-sm-10">
+                        <p id="receiver-phone">@Package.ReceiverPhone</p>
+                    </div>
+                </div>
+                <div class ="form-group row">
+                    <label for="receiver-addr" class="col-sm-2 col-form-label">Đ/c người nhận</label>
+                    <div class="col-sm-10">
+                        <p id="receiver-addr">@Package.ReceiverAddr</p>
+                    </div>
+                </div>
+                <div class ="form-group row">
+                    <label for="weight" class="col-sm-2 col-form-label">Cân nặng</label>
+                    <div class="col-sm-10">
+                        <p id="weight">@Package.Weight</p>
+                    </div>
+                </div>
+                <div class ="form-group row">
+                    <label for="collect" class="col-sm-2 col-form-label">Tiền thu hộ</label>
+                    <div class="col-sm-10">
+                        <p id="collect">@Package.Collect VND</p>
+                    </div>
+                </div>
+                <div class ="form-group row">
+                    <label for="ship-cost" class="col-sm-2 col-form-label">Phí ship</label>
+                    <div class="col-sm-10">
+                        <p id="ship-cost">@Package.ShipCost VND</p>
+                    </div>
+                </div>
+                <div class ="form-group row">
+                    <label for="paystatus" class="col-sm-2 col-form-label">Đã thanh toán</label>
+                    <div class="col-sm-10">
+                        <p id="paystatus">@Convert.ChangeType(Package.PayStatus, Package.PayStatus.GetTypeCode())</p>
+                    </div>
+                </div>
+                <div class ="form-group row">
+                    <label for="route" class="col-sm-2 col-form-label">Mã tuyến</label>
+                    <div class="col-sm-10">
+                        <p id="route">@Package.PackageId</p>
+                    </div>
+                </div>
+                <div class ="form-group row">
+                    <label for="store" class="col-sm-2 col-form-label">Nơi lưu</label>
+                    <div class="col-sm-10">
+                        @if (Package.LocaId != null)
+                        {
+                            <p id="store">@Package.PackageId</p>
+                        }
+                        else
+                        {
+                            <p id="store">N/a</p>
+                        }
+                    </div>
+                </div>
+            }
+        </Authorized>
+        <NotAuthorized>
+            <AccessDenied></AccessDenied>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+

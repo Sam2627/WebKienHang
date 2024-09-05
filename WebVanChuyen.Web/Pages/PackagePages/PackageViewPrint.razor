@@ -1,0 +1,49 @@
+﻿@page "/package-report/{packageId}"
+
+@using WebVanChuyen.Models.Models
+
+
+<h3>PackageViewPrint</h3>
+
+
+
+
+@code {
+    private Package package;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+
+    private string StatusName()
+    {
+        switch (package.Status)
+        {
+            case 0:
+                return "Đang ở kho";
+                break;
+            case 1:
+                return "Đang vận chuyển";
+                break;
+        }
+
+        return null;
+    }
+
+    private string PayStatusName()
+    {
+        switch (package.PayStatus)
+        {
+            case 0:
+                return "Chưa thanh toán";
+                break;
+            case 1:
+                return "Đã thanh toán";
+                break;
+        }
+
+        return null;
+    }
+}

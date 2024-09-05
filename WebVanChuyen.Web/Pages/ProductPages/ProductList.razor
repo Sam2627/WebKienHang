@@ -1,0 +1,49 @@
+﻿@page "/products"
+@inherits ProductListBase
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView Policy="ManagerRole">
+        <Authorized>
+            <h3>Danh sách sản phẩm</h3>
+            <br />
+            <ProductAdd></ProductAdd>
+            <br />
+            <div class="table">
+                <table>
+                    <thead>
+                    <th class="col-sm-1" style="text-align:center">Mã sản phẩm</th>
+                    <th class="col-sm-3">Tên sản phẩm</th>
+                    <th class="col-sm-4">Mô tả</th>
+                    <th class="col-sm-2"></th>
+                    </thead>
+                    @if (Products == null)
+                    {
+                        <div class="spinner"></div>
+                    }
+                    else
+                    {
+                        <tbody>
+                            @foreach (var product in Products)
+                            {
+                                <tr>
+                                    <td class="col-sm-2" style="text-align:center; border-right: 1px solid #000">@product.ProductId</td>
+                                    <td class="col-sm-3" style="border-right: 1px solid #000">@product.ProductName</td>
+                                    <td class="col-sm-5" style="border-right: 1px solid #000">@product.ProductDesc</td>
+                                    <td class="col-sm-1">
+                                        <button class="btn-primary"> Cập nhập</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    }
+                </table>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <AccessDenied></AccessDenied>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+

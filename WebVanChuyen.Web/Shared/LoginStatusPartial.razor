@@ -1,0 +1,52 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@attribute [Authorize]
+@attribute [IgnoreAntiforgeryToken]
+
+@inject AuthenticationStateProvider authenticationStateProvider
+
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            @if (context.User.IsInRole("Dev") || context.User.IsInRole("Admin"))
+            {
+                <p>Welcome, @context.User.Identity.Name</p>
+            }
+            else
+            {
+                <p>Welcome, @userName</p>
+            }
+            <form method="get" action="/account/logout">
+                <button type="submit" class="ml-2 btn btn-link">Đăng xuất</button>
+            </form>
+
+            
+        </Authorized>
+        <NotAuthorized>
+            <a class="btn btn-link" href="/account/login">Đăng nhập</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+
+@code
+{   
+    private string userName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        {
+            var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            // Get the Fullname claim
+            var userNameClaim = user.FindFirst("UserName");
+
+            if (userNameClaim != null)
+            {
+                userName = userNameClaim.Value;
+            }
+        }
+    }
+
+    
+}

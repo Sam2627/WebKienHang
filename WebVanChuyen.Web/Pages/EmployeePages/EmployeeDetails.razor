@@ -1,0 +1,69 @@
+﻿@page "/employee"
+@page "/employee/{id}"
+
+@inherits EmployeeDetailsBase
+
+
+<h3>@PageHeader</h3>
+
+@if (!IsCreate)
+{
+    @if (Employee == null)
+    {
+        <div class="spinner"></div>
+    }
+    else
+    {
+        <div class="row justify-content-center m-3">
+            <div class="col-sm-8">
+                <div class="card">
+                    <div class="card-body">
+                        <img class="card-img-top" src="" />
+                        <h4>Mã nhân viên: @Employee.EmployeeId</h4>
+                        <h4>Tên nhân viên: @Employee.EmployeeName</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="row justify-content-center m-3">
+        <div class="col-sm-8">
+            <div class="card">
+                <div class="card-body">
+                    <img class="card-img-top" src="" />
+                    <label for="employee-name" class="col-sm-2 col-form-label">Tên nhân viên:</label>
+                    <div class="col-sm-10">
+                        <InputText id="employee-name" class="form-control" placeholder="" @bind-Value="Employee.EmployeeName" />
+                    </div>
+                    <label for="position" class="col-sm-2 col-form-label">Chức vụ nhân viên:</label>
+                    <InputSelect id="position" class="form-control" @bind-Value="Employee.PositionId">
+                        @foreach (var pos in EmployeePositions)
+                        {
+                            <option value="@pos.PositionId">@pos.PositionName</option>
+                        }
+                    </InputSelect>
+                    <label for="warehouse" class="col-sm-2 col-form-label">Nơi làm việc:</label>
+                    <InputSelect id="warehouse" class="form-control" @bind-Value="Employee.WWarehouseId">
+                        @foreach(var ware in Warehouses)
+                        {
+                            <option value="@ware.WarehouseId">@ware.WarehouseName</option>
+                        }
+                    </InputSelect>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary" type="submit">Tạo nhân viên</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+
+
+

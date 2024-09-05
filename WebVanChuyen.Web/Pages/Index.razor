@@ -1,0 +1,20 @@
+﻿@page "/"
+@inject IJSRuntime JS
+
+
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            <div>
+                Welcome @context.User.Identity.Name .
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <a href="/account/login">Đăng nhập tài khoản</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+

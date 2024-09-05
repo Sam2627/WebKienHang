@@ -1,0 +1,111 @@
+﻿@page "/packages"
+@inherits PackageListBase
+@using WebVanChuyen.Models.Models
+
+
+<CascadingAuthenticationState>
+    <h3>Danh sách kiện hàng</h3>
+    <!-- View data for staff -->
+     <AuthorizeView Roles="Staff">  
+         <Authorized>
+            <br />
+            <div>
+                <a class="btn btn-primary m-1" href="@("/package/add")">Thêm kiện hàng</a>
+            </div>
+            <br />
+             <div class="table">
+                  <table>
+                    <thead>
+                    <th>Mã kiện hàng</th>
+                    <th>Người gửi</th>
+                    <th>SDT Người gửi</th>
+                    <th>Người nhận</th>
+                    <th>SDT Người nhận</th>
+                    <th>Cân nặng(kg)</th>
+                    <th>Tiền thu (VNĐ)</th>
+                    <th>Vị trí hiện tại</th>
+                    </thead>
+                    <tbody>
+                        @if (Warehouses == null || PackagesList == null)
+                        {
+                            <div class="spinner"></div>
+                        }
+                        else
+                        {
+                            @foreach (var package in PackagesList)
+                            {
+                                 <tr>
+                                    <td style="text-align: center">@package.PackageId</td>
+                                    <td>@package.SenderName</td>
+                                    <td>@package.SenderPhone</td>
+                                    <td>@package.ReceiverName</td>
+                                    <td>@package.ReceiverPhone</td>
+                                    <td>@package.Weight</td>
+                                    <td>@PackageCost(package)</td>
+                                    <td>@LocationName(package)</td>
+                                 </tr>
+                            }
+                        }
+                    </tbody>
+                  </table>
+             </div>
+         </Authorized>
+     </AuthorizeView>
+     <AuthorizeView Roles="Shipper">
+         <Authorized>
+            <div>
+                <InputCheckbox id="check" @bind-Value="IsRegister" @bind-Value:after="LoadPackages"></InputCheckbox>
+                <label for="check" class="col-sm-2 col-form-label">Chọn đơn giao</label>
+            </div>
+            <hr />
+            <div class="table">
+                <table>
+                    <thead>
+                    <th>Mã kiện hàng</th>
+                    <th>Người nhận</th>
+                    <th>SDT Người nhận</th>
+                    <th>Cân nặng(kg)</th>
+                    <th>Tiền thu (VNĐ)</th>
+                    <th>Vị trí hiện tại</th>
+                    </thead>
+                    <tbody>
+                        @if (Warehouses == null || PackagesList == null)
+                        {
+                            <div class="spinner"></div>
+                        }
+                        else
+                        {
+                            @foreach (var package in PackagesList)
+                            {
+                                <tr>
+                                    <td style="text-align: center">@package.PackageId</td>
+                                    <td>@package.ReceiverName</td>
+                                    <td>@package.ReceiverPhone</td>
+                                    <td>@package.Weight</td>
+                                    <td>@PackageCost(package)</td>
+                                    <td>@LocationName(package)</td>
+                                    @switch (GetButtonType(package))
+                                    {
+                                        case 1:
+                                            <td>
+                                                <button type="button" class="btn btn-primary m-1" @onclick="() => RegisterPackage(package.PackageId)">Nhận đơn</button>
+                                            </td>
+                                            break;
+                                        case 2:
+                                            <td>
+                                                <button type="button" class="btn btn-primary m-1" @onclick="() => ShowConfirmDelivery(package.PackageId)">Xác nhận giao hàng</button>
+                                            </td>
+                                            break;
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+         </Authorized>
+     </AuthorizeView>
+     <!-- Show pop-up when confirm delivery packages -->
+        <ConfirmDelivery DeliveryConfirm="ConfirmDelivery" @ref="Confirmation"></ConfirmDelivery>
+</CascadingAuthenticationState>
+

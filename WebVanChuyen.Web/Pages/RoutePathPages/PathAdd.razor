@@ -1,0 +1,67 @@
+﻿@page "/path/add"
+@inherits PathAddBase
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView Context="ViewContext" Policy="AdminOnly">
+        <Authorized>
+            <h3>Thêm đường đi</h3>
+            <p>@RouteExist</p>
+            <br />
+            <EditForm Context="EditContext" Model="@Path" OnValidSubmit="HandleValidSubmit">
+                <div class="form-group row">
+                    <label for="start" class="col-sm-2 col-form-label">Khởi hành</label>
+                    <div class="col-sm-5">
+                        <InputSelect id="start" @bind-Value="Path.StartPoint" class="form-control" @onclick="OnclickStart" @bind-Value:after="OnSelectStart">
+                            <option value="">Chọn</option>
+                            @foreach (var start in Starts)
+                            {
+                                <option value="@start.WarehouseId">@start.WarehouseName</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => Path.StartPoint)" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="end" class="col-sm-2 col-form-label">Điểm đến</label>
+                    <div class="col-sm-5">
+                        <InputSelect id="end" @bind-Value="Path.EndPoint" class="form-control" @onclick="OnclickEnd" @bind-Value:after="OnSelectEnd">
+                            <option value="">Chọn</option>
+                            @foreach (var end in Ends)
+                            {
+                                <option value="@end.WarehouseId">@end.WarehouseName</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => Path.EndPoint)" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="cost" class="col-sm-2 col-form-label">Chi phí</label>
+                    <div class="col-sm-5">
+                        <InputNumber id="cost" @bind-Value="Path.Cost" class="form-control">
+
+                        </InputNumber>
+                        <ValidationMessage For="@(() => Path.Cost)" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="shipcost" class="col-sm-2 col-form-label">Phí ship</label>
+                    <div class="col-sm-5">
+                        <InputNumber id="shipcost" @bind-Value="Path.ShipCost" class="form-control">
+
+                        </InputNumber>
+                        <ValidationMessage For="@(() => Path.ShipCost)" />
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-primary" type="submit">Thêm đường đi</button>
+                </div>
+            </EditForm>
+        </Authorized>
+        <NotAuthorized>
+            <AccessDenied></AccessDenied>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+

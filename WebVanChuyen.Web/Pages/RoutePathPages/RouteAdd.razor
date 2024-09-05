@@ -1,0 +1,55 @@
+﻿@inherits RouteAddBase
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView Context="ViewContext" Policy="AdminOnly">
+        <Authorized>
+            <h4 class="text-danger">@ErrorMessage</h4>
+            <br />
+            <EditForm Context="EditContext" Model="@SnE" OnValidSubmit="HandleValidSubmit">
+                <ValidationSummary />
+                <!-- Select start point -->
+                <div class="form-group row">
+                    <label for="start" class="col-sm-2 col-form-label">Khởi hành</label>
+                    <div class="col-sm-5">
+                        <InputSelect id="start" @bind-Value="SnE.StartPoint" class="form-control" @bind-Value:after="OnSelectStart">
+                            <option value="">Chọn</option>
+                            @foreach (var start in Starts)
+                            {
+                                <option value="@start.WarehouseId">@start.WarehouseName</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => SnE.StartPoint)" />
+                    </div>
+                </div>
+                <!-- Select end point -->
+                <div class="form-group row">
+                    <label for="end" class="col-sm-2 col-form-label">Điểm đến</label>
+                    <div class="col-sm-5">
+                        <InputSelect id="end" @bind-Value="SnE.EndPoint" class="form-control" @bind-Value:after="OnSelectEnd">
+                            <option value="">Chọn</option>
+                            @foreach (var end in Ends)
+                            {
+                                <option value="@end.WarehouseId">@end.WarehouseName</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => SnE.EndPoint)" />
+                    </div>
+                </div>
+                <!-- Button part -->
+                <div>
+                    <button class="btn btn-primary" type="submit" style="margin-right:20px" title="Thêm tuyến đường giữa nơi khởi hành và điếm đến">
+                        Thêm tuyến đường
+                        </button>
+                    <button class="btn btn-primary" type="button" title="Thêm các tuyến đường cho nơi khởi hành" @onclick="OnClickButton">
+                        Thêm các tuyến đường
+                    </button>
+                </div>
+            </EditForm>
+        </Authorized>
+        <NotAuthorized>
+            <AccessDenied></AccessDenied>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+

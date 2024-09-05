@@ -1,0 +1,62 @@
+﻿@page "/shipment-trip-view"
+@inject ShipmentTripStateContainer myStateContainer
+@inject NavigationManager _nav
+@using WebVanChuyen.Models.Models
+@using WebVanChuyen.Web.Services
+@using WebVanChuyen.Web.Services.Data
+
+<div style="resize:horizontal; overflow:clip; display:inline-flex">
+    <div>
+        <h3>Chuyến xe được tạo</h3>
+    </div>
+    <div>
+        <button class="btn btn-primary" style="margin-left:20px" @onclick="@(() => _nav.NavigateTo("/shipment-trip/add"))">Trở lại</button>
+    </div>
+</div>
+<hr />
+<div>
+    <p>Mã chuyến xe: @shipmentTripInfo.ShipmentId</p>
+    <p>Biển số xe: @shipmentTripInfo.TruckId</p>
+    <p>Tài xế chính: @shipmentTripInfo.Driver1Name</p>
+    <p>Tài xế phụ: @shipmentTripInfo.Driver2Name</p>
+    <p>Thời gian khởi hành: @shipmentTripInfo.BeginT</p>
+    <p>Nơi khởi hành: @shipmentTripInfo.StartWHName</p>
+    <p>Nơi đến: @shipmentTripInfo.EndWHName</p>
+</div>
+<hr />
+<div class="table">
+    <table>
+        <thead>
+        <th class="col-sm-1" style="text-align:center">Mã nhật ký</th>
+        <th class="col-sm-1" style="text-align:center">Mã chuyến xe</th>
+        <th class="col-sm-1" style="text-align:center">Biển số xe</th>
+        <th class="col-sm-1" style="text-align:center">Mã kiện hàng</th>
+        <th class="col-sm-4">Nội dung</th>
+        </thead>
+        <tbody>
+            @foreach (var packagelog in packageLogs)
+            {
+                <tr>
+                    <td class="col-sm-2" style="text-align:center; border-right: 1px solid #000">@packagelog.PackageLogId</td>
+                    <td class="col-sm-2" style="text-align:center; border-right: 1px solid #000">@packagelog.ShipmentTripId</td>
+                    <td class="col-sm-2" style="text-align:center; border-right: 1px solid #000">@packagelog.TruckId</td>
+                    <td class="col-sm-2" style="text-align:center; border-right: 1px solid #000">@packagelog.PackageId</td>
+                    <td class="col-sm-5" style="border-right: 1px solid #000">@packagelog.LogNote</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@code {
+    private ShipmentTripInfo shipmentTripInfo;
+    private List<PackageLog> packageLogs;
+
+    protected override async void OnInitialized()
+    {
+        base.OnInitialized();
+        shipmentTripInfo = myStateContainer.ShipmentTripInfo;
+        packageLogs = myStateContainer.PackageLogs;
+    }
+}

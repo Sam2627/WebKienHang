@@ -1,0 +1,137 @@
+﻿@page "/shipment-trip/add"
+@inherits ShipmentTripAddBase
+@implements IDisposable
+@using CustomInputAndValidation.CustomInput
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView Context="ViewContext" Policy="ManagerOnly">
+        <Authorized>
+            @if (WorkWarehouse == null)
+            {
+                <p class="text-danger">Xin đăng nhập bằng tài khoản quản lý có xác nhận vị trí làm việc</p>
+            }
+            else
+            {
+                <!-- ShipmentTrip part -->
+                if (Warehouses == null || Provinces == null || Employees == null || Routes == null || WorkWarehouseName == null || Trucks == null)
+                {
+                    <div class="spinner"></div>
+                }
+                else
+                {
+                    <b class="text-danger">@ErrorMessage</b>
+                    <br />
+                <EditForm Context="EditContext" Model="@AddShipmentTrip" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        <div class="form-group row">
+                            <p id="warehouse">Nơi khởi hành: @WorkWarehouseName</p>
+                        </div>
+                        <!-- Select location -->
+                        <div class="form-group row">
+                            <div style="resize:horizontal; overflow:clip; display:inline-flex; margin-left:4px">
+                                <label for="province" class="col-sm-2 col-form-label">Nơi đến</label>
+                                <div class="col-sm-auto">
+                                    <InputSelect id="province" class="form-control " @bind-Value="AddShipmentTrip.ProvinceId" @bind-Value:after="OnChangeProvince">
+                                        <option value="">Chọn tỉnh/tp</option>
+                                        @foreach (var province in Provinces)
+                                        {
+                                            <option value="@province.ProvinceId">@province.ProvinceName</option>
+                                        }
+                                    </InputSelect>
+                                    <ValidationMessage For="@(() => AddShipmentTrip.ProvinceId)" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Select truck -->
+                        <div class="form-group row">
+                            <label for="truck" class="col-sm-2 col-form-label">Biển số xe</label>
+                            <div class="col-sm-5">
+                                <InputSelect id="driver1" @bind-Value="AddShipmentTrip.TruckId" class="form-control">
+                                    <option value="">Chọn</option>
+                                    @if(Trucks != null)
+                                    {
+                                        foreach (var truck in Trucks)
+                                        {
+                                            <option value="@truck.TruckId">@truck.TruckId</option>
+                                        }
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="@(() => AddShipmentTrip.Driver1)" />
+                            </div>
+                        </div>
+                        <!-- Select driver -->
+                        <div class="form-group row">
+                            <label for="driver1" class="col-sm-2 col-form-label">Tài xế chính</label>
+                            <div class="col-sm-5">
+                                <InputSelect id="driver1" @bind-Value="AddShipmentTrip.Driver1" class="form-control" @bind-Value:after="OnChangedDriver1">
+                                    <option value=0>Chọn</option>
+                                    @if (Driver1 != null)
+                                    {
+                                        foreach (var driver in Driver1)
+                                        {
+                                            <option value="@driver.EmployeeId">@driver.EmployeeName</option>
+                                        }
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="@(() => AddShipmentTrip.Driver1)" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="driver2" class="col-sm-2 col-form-label">Tài xế phụ</label>
+                            <div class="col-sm-5">
+                                <InputSelect id="driver2" @bind-Value="AddShipmentTrip.Driver2" class="form-control" @bind-Value:after="OnChangedDriver2">
+                                    <option value=0>Chọn</option>
+                                    @if (Driver2 != null)
+                                    {
+                                        foreach (var driver in Driver2)
+                                        {
+                                            <option value="@driver.EmployeeId">@driver.EmployeeName</option>
+                                        }
+                                    }
+                                </InputSelect>
+                            </div>
+                        </div>
+                        <!-- Select start time -->
+                        <div class="form-group row">
+                            <label for="createdDate" class="col-sm-2 col-form-label">Chọn thời gian khởi hành</label>
+                            <div class="col-sm-5">
+                                <InputDateTime id="createdDate" class="form-control col-sm-8" @bind-Value="AddShipmentTrip.BeginT"></InputDateTime>
+                                <ValidationMessage For="@(() => AddShipmentTrip.BeginT)" />
+                            </div>
+                        </div>
+                        <!-- Button part -->
+                        <div>
+                            <button class="btn btn-primary" type="submit">Tạo chuyến xe</button>
+                        </div>
+                </EditForm>
+                    <hr />
+                    <!-- Packages part -->
+                    if (Packages == null)
+                    {
+                        <div class="spinner"></div>
+                    }
+                    else
+                    {
+                        <ol>
+                            @foreach (var package in TransportPackages)
+                            {
+                                <li>
+                                    <input type="checkbox" class="form-check-input" style="margin-left:20px" @onchange="@((ChangeEventArgs e) => EditSelectPackages(package.PackageId))" />
+                                    <span style="margin-left:30px">Kiện hàng số: @package.PackageId</span>
+                                </li>
+                            }
+                        </ol>
+                    }
+                }
+            }
+        </Authorized>
+        <NotAuthorized>
+            <AccessDenied></AccessDenied>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+
+
+

@@ -1,0 +1,41 @@
+﻿@page "/warehouse/{Id}"
+@inherits WarehouseDetailsBase
+
+
+.<style>
+    a{
+        margin-left:20px
+    }
+</style>
+
+
+<CascadingAuthenticationState>
+    <AuthorizeView Context="ViewContext">
+        <Authorized>
+            @if (Warehouse == null)
+            {
+                <div class="spinner"></div>
+            }
+            else
+            {
+                <EditForm Context="EditContext" Model="Warehouse">
+                    <h3>Kho hàng: @Warehouse.WarehouseName (Mã kho: @Warehouse.WarehouseId)</h3>
+                    <hr />
+                    <div class="form-group row">
+                        <label for="warehouse-addr" class="col-sm-2 col-form-label">Địa chỉ kho hàng</label>
+                        <div class="col-sm-10">
+                            <p id="warehouse-addr">@Warehouse.WarehouseAddr</p>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="@Warehouse.GPSCoordinates" target="_blank" class="btn btn-primary">Dẫn đường</a>
+                        <a href="/warehouses" class="btn btn-primary">Trở lại</a>
+                    </div>
+                </EditForm>
+            }
+        </Authorized>
+        <NotAuthorized>
+            <AccessDenied></AccessDenied>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
